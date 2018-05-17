@@ -90,5 +90,29 @@ func TestResponseWriter_WriteHeader(t *testing.T) {
 	e := w.End()
 	assert.Equal(t, 404, e.StatusCode)
 	assert.Equal(t, "Not Found\n", e.Body)
-	assert.Equal(t, "text/plain; charset=utf8", e.Headers["Content-Type"])
+	assert.Equal(t, "text/plain; charset=utf-8", e.Headers["Content-Type"])
+}
+
+func TestResponseWriter_Write_sniff(t *testing.T) {
+	tests := []struct{
+		In string
+		ExpectedContentType string
+	}{
+		{
+			In: "<!DOCTYPE html><html lang='e'><head><title>Document</title></head><body></body></html>",
+			ExpectedContentType: "text/html; charset=utf-8",
+		},
+		{
+			In: "hello world",
+			ExpectedContentType: "text/plain; charset=utf-8",
+		},
+	}
+
+	for _, test := range tests {
+		w := NewResponse()
+		w.Write([]byte(test.In))
+
+		e := w.End()
+		assert.Equal(t, test.ExpectedContentType, e.Headers["Content-Type"])
+	}
 }

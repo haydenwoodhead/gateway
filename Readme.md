@@ -1,4 +1,15 @@
-<img src="http://tjholowaychuk.com:6000/svg/title/APEX/GATEWAY">
+# Gateway
+
+[![GoDoc](https://godoc.org/github.com/haydenwoodhead/gateway?status.svg)](https://godoc.org/github.com/haydenwoodhead/gateway)
+![](https://img.shields.io/badge/license-MIT-blue.svg)
+![](https://img.shields.io/badge/status-stable-green.svg)
+[![Build Status](https://travis-ci.com/haydenwoodhead/gateway.svg?branch=master)](https://travis-ci.com/haydenwoodhead/gateway)
+
+
+Fork of [apex/gateway](https://github.com/apex/gateway) that sniffs content type using http.DetectContentType. Also
+allows writing headers after calling rw.WriteHeader() which apex/gateway does not for some reason.
+
+## About
 
 Package gateway provides a drop-in replacement for net/http's `ListenAndServe` for use in AWS Lambda & API Gateway, simply swap it out for `gateway.ListenAndServe`. Extracted from [Up](https://github.com/apex/up) which provides additional middleware features and operational functionality.
 
@@ -11,7 +22,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/apex/gateway"
+	"github.com/haydenwoodhead/gateway"
 )
 
 func main() {
@@ -26,8 +37,3 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 ---
 
-[![GoDoc](https://godoc.org/github.com/apex/up-go?status.svg)](https://godoc.org/github.com/apex/gateway)
-![](https://img.shields.io/badge/license-MIT-blue.svg)
-![](https://img.shields.io/badge/status-stable-green.svg)
-
-<a href="https://apex.sh"><img src="http://tjholowaychuk.com:6000/svg/sponsor"></a>

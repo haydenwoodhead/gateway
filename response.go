@@ -42,6 +42,10 @@ func (w *ResponseWriter) Write(b []byte) (int, error) {
 		w.WriteHeader(http.StatusOK)
 	}
 
+	if w.Header().Get("Content-Type") == "" {
+		w.Header().Set("Content-Type", http.DetectContentType(b))
+	}
+
 	return w.buf.Write(b)
 }
 
@@ -51,21 +55,7 @@ func (w *ResponseWriter) WriteHeader(status int) {
 		return
 	}
 
-	if w.Header().Get("Content-Type") == "" {
-		w.Header().Set("Content-Type", "text/plain; charset=utf8")
-	}
-
 	w.out.StatusCode = status
-
-	h := make(map[string]string)
-
-	for k, v := range w.Header() {
-		if len(v) > 0 {
-			h[k] = v[len(v)-1]
-		}
-	}
-
-	w.out.Headers = h
 	w.wroteHeader = true
 }
 
@@ -84,13 +74,23 @@ func (w *ResponseWriter) End() events.APIGatewayProxyResponse {
 		w.out.Body = w.buf.String()
 	}
 
+	h := make(map[string]string)
+
+	for k, v := range w.Header() {
+		if len(v) > 0 {
+			h[k] = v[len(v)-1]
+		}
+	}
+
+	w.out.Headers = h
+
 	// notify end
 	w.closeNotifyCh <- true
 
 	return w.out
 }
 
-// isBinary returns true if the response reprensents binary.
+// isBinary returns true if the response represents binary.
 func isBinary(h http.Header) bool {
 	switch {
 	case !isTextMime(h.Get("Content-Type")):
